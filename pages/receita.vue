@@ -17,21 +17,21 @@
 				<h3 class="meal-section-title">Ingredientes</h3>
 				<div class="meal-section">
 					<ul class="ingredients-list">
-						<li v-for="(item, index) in mealIngredients" :key="index">{{ item.measure }} - {{ item.name }}</li>
+						<li v-for="(item, index) in mealIngredients" :key="index">{{ item.measure }} {{ item.name }}</li>
 					</ul>
 				</div>
 				<h3 class="meal-section-title">Modo de Preparo</h3>
 				<div class="meal-section">
-					<p class="prepare-instructions">{{ meal.strInstructions }}</p>
+					<p v-for="(instruction, i) in meal.strInstructions.split('. ')" :key="i" class="prepare-instructions">{{ instruction }}.</p>
 				</div>
 
 				<div class="tags-holder">
 					<span v-for="(tag, index) in meal.strTags.split(',')" :key="index">{{ tag }}</span>
 				</div>
 
-				<!-- <div v-if="meal.strYoutube && meal.strYoutube.length > 0" class="video-holder">
+				<div v-if="meal.strYoutube && meal.strYoutube.length > 0" class="video-holder">
 					<iframe title="Video" height="300" width="300" :src="meal.strYoutube"></iframe>
-				</div> -->
+				</div> 
 			</div>
 		</section>
 	</div>
@@ -126,6 +126,7 @@ export default Vue.extend({
 				this.meal = returnedMeals[0] || {};
 				this.mealName = this.meal.strMeal || "";
 				this.normalizeIngredients();
+				console.log(this.meal)
 			}
 		},
 
@@ -210,6 +211,18 @@ export default Vue.extend({
 	margin: 5px;
 }
 
+.ingredients-list{
+	width: 90%;
+	margin: auto;
+	padding: 0 8px;
+}
+
+.ingredients-list li{
+	margin: 4px 0;
+	padding: 0 5px;
+	list-style-type: circle;
+}
+
 .tags-holder{
 	margin: 3px 0;
 }
@@ -217,10 +230,17 @@ export default Vue.extend({
 .tags-holder span{
 	margin: 2px;
 	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 5px;
 	background-color: var(--color-primary);
-	padding: 3px;
+	padding: 3px 5px;
 	color: #eeeeee;
 	font-size: 13px;
+}
+
+.video-holder{
+	width: 100%;
+	margin: 5px auto;
+	text-align: center;
 }
 
 @media (max-width: 991px) {
