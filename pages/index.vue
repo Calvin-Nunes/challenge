@@ -8,20 +8,15 @@
 		<section>
 			<div class="description-card">
 				<div class="input-pesquisa-box">
-					<c-input
-						v-model="searchText"
-						placeholder="Qual ingrediente você mais gosta?"
-						icon="fas fa-search"
-						height="50"
-						fontSize="20"></c-input>
+					<c-search-box :onSearch="goToSearchIngredient" placeholder="What ingredient is your favorite?" height="50" fontSize="20"></c-search-box>
 				</div>
-				<h3>Categorias</h3>
+				<h3>Choose a Category</h3>
 			</div>
 		</section>
 		<section>
 			<div class="categories-holder">
 				<load-spinner v-if="isFetchingData" :loading="isFetchingData"></load-spinner>
-				<a v-for="category of categories" :key="category.idCategory" class="category-card" @click="goToMealCategory(category)">
+				<a v-for="category of categories" :key="category.idCategory" class="category-card show-as-animation" @click="goToMealCategory(category)">
 					<div class="category-image-holder">
 						<img :src="category.strCategoryThumb" :alt="category.strCategory" />
 					</div>
@@ -36,13 +31,17 @@
 import Vue from "vue";
 import ApiHelper from "static/libraries/ApiHelper";
 import LibUtils from "static/libraries/libUtils";
-import routerHelper from "~/mixins/router-helper";
+import mixinsHelper from "~/mixins/mixins-helper";
 import axios from "axios";
 import LoadSpinner from "@/components/LoadSpinner.vue";
+import SearchBox from "@/components/SearchBox.vue";
 
 export default Vue.extend({
-	components: { "load-spinner": LoadSpinner },
-	mixins: [routerHelper],
+	components: {
+		"load-spinner": LoadSpinner,
+		"c-search-box": SearchBox,
+	},
+	mixins: [mixinsHelper],
 
 	data: () => {
 		return {
@@ -108,6 +107,16 @@ export default Vue.extend({
 		verifyCategoriesData: function (data) {
 			if (LibUtils.isFilled(data)) {
 				this.categories = data.categories || [];
+			}
+		},
+
+		/*
+		| função: goToSearchIngredient
+		| Utilizando o texto pesquisado, abre a pagina de pesquisa já com a pesquisa pronta
+		| ---- */
+		goToSearchIngredient: function (text) {
+			if (text && text.length > 0) {
+				this.navigate("pesquisa-ingrediente", { ingredient: text });
 			}
 		},
 	},
@@ -193,10 +202,11 @@ export default Vue.extend({
 @media (max-width: 767px) {
 	.categories-holder {
 		padding: 5px;
+		margin: 0 0 10px 0;
 	}
 
 	.category-card {
-		width: calc(33.33% - 5px);
+		width: calc(50% - 5px);
 	}
 
 	.input-pesquisa-box {

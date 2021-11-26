@@ -241,6 +241,13 @@ GLOBAL REUSEABLE STYLES
   text-align: center;
 }
 
+.show-as-animation {
+  -webkit-animation: show-item 0.5s ease-in 1 forwards;
+          animation: show-item 0.5s ease-in 1 forwards;
+  -webkit-transition: 0.3s all ease-in;
+  transition: 0.3s all ease-in;
+}
+
 .pagination-box {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -259,26 +266,40 @@ GLOBAL REUSEABLE STYLES
 }
 
 @media (max-width: 767px) {
+  .page-wrapper {
+    overflow-y: auto;
+  }
+  .page-wrapper .page-content {
+    position: relative;
+    height: auto;
+    top: 0;
+  }
   .banner-box img {
     width: 100%;
-    max-width: 150px;
     height: auto;
     -o-object-fit: contain;
        object-fit: contain;
+  }
+  .page-header .page-title {
+    font-size: 28px;
   }
 }
 
 @-webkit-keyframes show-item {
   from {
+    opacity: 0;
   }
   to {
+    opacity: 1;
   }
 }
 
 @keyframes show-item {
   from {
+    opacity: 0;
   }
   to {
+    opacity: 1;
   }
 }
 /*# sourceMappingURL=core.css.map */

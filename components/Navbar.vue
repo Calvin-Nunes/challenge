@@ -7,7 +7,7 @@
 			<span>MealDB</span>
 		</div>
 		<div class="nav-right">
-			<p>Future - Desafio MealDB API</p>
+			<p>Future - Challenge</p>
 		</div>
 	</nav>
 </template>

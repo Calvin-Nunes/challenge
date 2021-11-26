@@ -189,7 +189,7 @@ GLOBAL REUSEABLE STYLES
 	opacity: 0.85;
 }
 
-.page-header .return-button{
+.page-header .return-button {
 	position: absolute;
 	left: 5px;
 	top: 5px;
@@ -199,13 +199,18 @@ GLOBAL REUSEABLE STYLES
 	border-radius: 4px;
 }
 
-.page-header .return-button:hover{
+.page-header .return-button:hover {
 	cursor: pointer;
 	border-color: #777777;
 }
 
 .page-subtitle {
 	text-align: center;
+}
+
+.show-as-animation {
+	animation: show-item 0.5s ease-in 1 forwards;
+	transition: 0.3s all ease-in;
 }
 
 .pagination-box {
@@ -219,17 +224,32 @@ GLOBAL REUSEABLE STYLES
 }
 
 @media (max-width: 767px) {
+	.page-wrapper {
+		overflow-y: auto;
+	}
+
+	.page-wrapper .page-content {
+		position: relative;
+		height: auto;
+		top: 0;
+	}
+
 	.banner-box img {
 		width: 100%;
-		max-width: 150px;
 		height: auto;
 		object-fit: contain;
+	}
+
+	.page-header .page-title {
+		font-size: 28px;
 	}
 }
 
 @keyframes show-item {
 	from {
+		opacity: 0;
 	}
 	to {
+		opacity: 1;
 	}
 }

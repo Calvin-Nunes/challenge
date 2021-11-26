@@ -4,7 +4,7 @@
 			<p>Developer Email: calvin_nunes13@hotmail.com</p>
 			<p>Developer Phone: +55 51 98402-9317</p>
 		</div>
-		<div class="footer-column footer-center">MealDB Challenge</div>
+		<div class="footer-column footer-center"><b>MealDB Challenge</b></div>
 		<div class="footer-column footer-right">
 			<ul class="footer-links">
 				<li v-for="(link, index) in footerLinks" :key="index">
@@ -64,5 +64,25 @@ export default Navbar;
 
 .page-footer > .footer-column p {
 	margin: 2px;
+}
+
+@media (max-width: 767px) {
+	.page-footer {
+		position: relative;
+		flex-direction: column;
+		align-items: center;
+		height: fit-content;
+		bottom: unset;
+		left: unset;
+	}
+
+	.page-footer > div.footer-column {
+		width: 100%;
+		margin: 5px auto;
+	}
+
+	.page-footer .footer-links li {
+		text-align: center;
+	}
 }
 </style>

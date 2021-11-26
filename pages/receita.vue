@@ -2,7 +2,7 @@
 	<div class="page-content">
 		<section>
 			<div class="page-header">
-				<a @click="$router.go(-1)" class="return-button">Voltar</a>
+				<a @click="$router.go(-1)" class="return-button">Back</a>
 				<div class="header-left">
 					<h1 class="page-title meal-name">{{ mealName }}</h1>
 					<h4 class="meal-category" @click="returnToCategory">{{ meal.strCategory || "" }}</h4>
@@ -14,24 +14,31 @@
 		</section>
 		<section>
 			<div class="meal-holder" v-if="meal != null && meal.idMeal > 0">
-				<h3 class="meal-section-title">Ingredientes</h3>
+				<c-button caption="Jump to Video" theme="light" id="go-video-button" :onTap="scrollToPreparationVideo">
+					<icon icon="fas fa-video"></icon>
+				</c-button>
+				<h3 class="meal-section-title">Ingredients</h3>
 				<div class="meal-section">
 					<ul class="ingredients-list">
-						<li v-for="(item, index) in mealIngredients" :key="index">{{ item.measure }} {{ item.name }}</li>
+						<li v-for="(item, index) in mealIngredients" :key="index" class="show-as-animation">{{ item.measure }} {{ item.name }}</li>
 					</ul>
 				</div>
-				<h3 class="meal-section-title">Modo de Preparo</h3>
+				<h3 class="meal-section-title">How to Prepare</h3>
 				<div class="meal-section">
 					<p v-for="(instruction, i) in meal.strInstructions.split('. ')" :key="i" class="prepare-instructions">{{ instruction }}.</p>
 				</div>
 
 				<div class="tags-holder">
-					<span v-for="(tag, index) in meal.strTags.split(',')" :key="index">{{ tag }}</span>
+					<span v-for="(tag, index) in getMealTags" :key="index">{{ tag }}</span>
 				</div>
 
 				<div v-if="meal.strYoutube && meal.strYoutube.length > 0" class="video-holder">
-					<iframe title="Video" height="300" width="300" :src="meal.strYoutube"></iframe>
-				</div> 
+					<iframe title="Video" height="300" width="380" :src="getYoutubeEmbedVideo" id="preparation-video"></iframe>
+				</div>
+				<span class="meal-source">
+					From:
+					<a :href="this.meal.strSource || '#'">{{ this.meal.strSource || "" }}</a>
+				</span>
 			</div>
 		</section>
 	</div>
@@ -41,12 +48,12 @@
 import Vue from "vue";
 import ApiHelper from "static/libraries/ApiHelper";
 import LibUtils from "static/libraries/libUtils";
-import routerHelper from "~/mixins/router-helper";
+import mixinsHelper from "~/mixins/mixins-helper";
 import axios from "axios";
 import LoadSpinner from "@/components/LoadSpinner.vue";
 
 export default Vue.extend({
-	mixins: [routerHelper],
+	mixins: [mixinsHelper],
 	data: () => {
 		return {
 			mealName: "",
@@ -126,7 +133,6 @@ export default Vue.extend({
 				this.meal = returnedMeals[0] || {};
 				this.mealName = this.meal.strMeal || "";
 				this.normalizeIngredients();
-				console.log(this.meal)
 			}
 		},
 
@@ -140,6 +146,37 @@ export default Vue.extend({
 					category: this.meal.strCategory,
 				};
 				this.navigate("receitas-categoria", params);
+			}
+		},
+
+		/*
+		| função: scrollToPreparationVideo
+		| Função que usa o scroll vertical para ir até o video na tela 
+		| ---- */
+		scrollToPreparationVideo: function () {
+			this.$el.querySelector("#preparation-video").scrollIntoView({ behavior: "smooth" });
+		},
+	},
+
+	computed: {
+		/*
+		| função: getMealTags
+		| se preenchido, retorna as tags da receita em formato de array
+		| ---- */
+		getMealTags: function () {
+			if (this.meal != null && this.meal.strTags != null && this.meal.strTags.length > 0) {
+				return this.meal.strTags.split(",");
+			}
+		},
+
+		/*
+		| função: getYoutubeEmbedVideo
+		| Função utilizada para ajustar a URL do video para ser usada em iframe, tornando o link no formato de embedded video
+		| ---- */
+		getYoutubeEmbedVideo: function () {
+			if (this.meal != null && this.meal.idMeal > 0) {
+				let videoUrl = this.meal.strYoutube;
+				return videoUrl.replace("watch?v=", "embed/");
 			}
 		},
 	},
@@ -167,7 +204,7 @@ export default Vue.extend({
 	align-items: center;
 }
 
-.meal-name{
+.meal-name {
 	text-align: left;
 }
 
@@ -195,6 +232,7 @@ export default Vue.extend({
 .meal-holder {
 	display: flex;
 	flex-direction: column;
+	position: relative;
 	gap: 5px;
 	flex-wrap: nowrap;
 	margin: 0 20% 10px 20%;
@@ -211,23 +249,23 @@ export default Vue.extend({
 	margin: 5px;
 }
 
-.ingredients-list{
+.ingredients-list {
 	width: 90%;
 	margin: auto;
 	padding: 0 8px;
 }
 
-.ingredients-list li{
+.ingredients-list li {
 	margin: 4px 0;
 	padding: 0 5px;
 	list-style-type: circle;
 }
 
-.tags-holder{
+.tags-holder {
 	margin: 3px 0;
 }
 
-.tags-holder span{
+.tags-holder span {
 	margin: 2px;
 	border: 1px solid rgba(0, 0, 0, 0.15);
 	border-radius: 5px;
@@ -237,13 +275,35 @@ export default Vue.extend({
 	font-size: 13px;
 }
 
-.video-holder{
+#go-video-button {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 180px;
+	height: 40px;
+}
+
+.video-holder {
 	width: 100%;
 	margin: 5px auto;
 	text-align: center;
 }
 
+.video-holder iframe {
+	max-width: 520px;
+}
+
+.meal-source {
+	font-size: 13px;
+	font-style: italic;
+	color: #333333;
+}
+
 @media (max-width: 991px) {
+	.page-header {
+		padding: 10px 10%;
+	}
+
 	.meal-holder {
 		margin: 0 2% 10px 2%;
 	}
@@ -251,14 +311,58 @@ export default Vue.extend({
 
 @media (max-width: 767px) {
 	.page-header {
-		padding: 5px 2%;
+		padding: 15px 2%;
 	}
 	.page-header .page-logo {
 		width: 86px;
 	}
 
+	.meal-section {
+		margin: 10px 0;
+	}
+
+	.meal-section-title {
+		margin: 0px;
+	}
+
+	.ingredients-list {
+		width: 95%;
+	}
+
+	.meal-name {
+		font-size: 28px;
+	}
+
+	.meal-category {
+		font-size: 18px;
+	}
+
+	.header-right {
+		max-width: 180px;
+	}
+
+	.meal-photo {
+		max-width: 180px;
+	}
+
 	.meal-holder {
 		padding: 5px;
+	}
+
+	.video-holder iframe {
+		max-width: 280px;
+	}
+}
+</style>
+<style lang="scss">
+@media (max-width: 767px) {
+	.meal-holder {
+		#go-video-button {
+			width: 45px;
+		}
+		#go-video-button span {
+			display: none;
+		}
 	}
 }
 </style>

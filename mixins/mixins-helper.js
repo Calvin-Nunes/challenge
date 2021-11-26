@@ -22,6 +22,6 @@ export default {
             query = query.replace(/\?/g,"-")
             query = encodeURI(query)
             return query
-        }
+        },		
 	},
 };

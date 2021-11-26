@@ -1,5 +1,6 @@
 <template>
 	<button :class="buttonClass" @click="onTapButton">
+		<slot></slot>
 		<span v-if="route == null || disabled === true">{{ caption }}</span>
 		<nuxt-link v-else :to="route">{{ caption }}</nuxt-link>
 	</button>
@@ -38,7 +39,7 @@ const Button = Vue.extend({
 		},
 
 		setDisabledStatus: function () {
-			this.isDisabled = this.disabled;
+			this.isDisabled = this.disabled || false;
 
 			if (this.isDisabled && this.cssClasses.includes("disabled") === false) {
 				this.cssClasses.push("disabled");
@@ -194,5 +195,10 @@ export default Button;
 .theme-danger:hover {
 	border: 1px solid #d11212;
 	opacity: 0.9;
+}
+@media (max-width:767px) {
+	.button-base span{
+		font-size: 15px;
+	}
 }
 </style>

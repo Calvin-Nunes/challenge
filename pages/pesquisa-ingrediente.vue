@@ -4,8 +4,11 @@
 			<div class="page-header">
 				<a @click="$router.go(-1)" class="return-button">Back</a>
 				<div class="header-top-holder">
-					<h1 class="page-title">{{ categoryName }}</h1>
+					<h1 class="page-title">Ingredient: {{ getSearchedIngredientDisplay() }}</h1>
 					<img src="~/assets/images/icon.png" class="page-logo" />
+				</div>
+				<div class="input-pesquisa-box">
+					<c-search-box :onSearch="getMealsByIngredient" placeholder="What ingredient is your favorite?" height="50" fontSize="20"></c-search-box>
 				</div>
 			</div>
 		</section>
@@ -24,7 +27,7 @@
 					</div>
 					<p class="meal-name">{{ meal.strMeal }}</p>
 				</div>
-				<p v-else>No meals available</p>
+				<p v-else>No meals using '{{ getSearchedIngredientDisplay() }}' as main ingredient.</p>
 			</div>
 			<div class="pagination-box" v-if="totalPages > 1">
 				<c-button caption="< Anterior" theme="light" :disabled="currentPage <= 1" :onTap="recuarPaginacao"> </c-button>
@@ -42,14 +45,16 @@ import LibUtils from "static/libraries/libUtils";
 import mixinsHelper from "~/mixins/mixins-helper";
 import axios from "axios";
 import LoadSpinner from "@/components/LoadSpinner.vue";
+import SearchBox from "@/components/SearchBox.vue";
 
 export default Vue.extend({
-	components: { "load-spinner": LoadSpinner },
+	components: {
+		"load-spinner": LoadSpinner,
+		"c-search-box": SearchBox,
+	},
 	mixins: [mixinsHelper],
 	data: () => {
 		return {
-			categoryName: "",
-			categoryId: 0,
 			searchText: "",
 			meals: [],
 			mealsDisplaying: [],
@@ -63,49 +68,61 @@ export default Vue.extend({
 	created() {
 		let queryParams = this.$route.query;
 		if (queryParams != null) {
-			this.categoryName = queryParams.category || "";
-			this.categoriaId = LibUtils.toDecimal(queryParams.id);
+			this.searchText = queryParams.ingredient || "";
 		}
 
-		this.getMeals();
-	},
-
-	updated() {
-		if (!this.isFetchingData && this.meals.length == 0) {
-			this.getMeals();
+		if (LibUtils.isFilled(this.searchText)) {
+			this.getMealsByIngredient(this.searchText);
 		}
 	},
 
 	methods: {
 		/*
-		| função: getMeals
-		| Utilizando a classe auxiliar ApiHelper, cria a URL, faz uma chamada GET para API buscando os dados das meals da category
+		| função: getMealsByIngredientByIngredient
+		| Utilizando a classe auxiliar ApiHelper, cria a URL, faz uma chamada GET para API buscando
+		| as receitas que utilizem o ingrediente pesquisado
 		| ---- */
-		getMeals: function () {
-			if (LibUtils.isFilled(this.categoryName)) {
-				const apiHelper = new ApiHelper("1");
-				let mealsEndpoint = apiHelper.Endpoints.category;
-				let mealsUrl = apiHelper.buildRequestUrl(mealsEndpoint, this.categoryName);
+		getMealsByIngredient: function (searchingIngredient) {
+			if (LibUtils.isFilled(searchingIngredient)) {
+				searchingIngredient = this.getNormalizedQuery(searchingIngredient.replace(/ /g, "_").toLowerCase());
+			}
 
-				if (LibUtils.isFilled(mealsUrl)) {
-					this.isFetchingData = true;
-					axios
-						.get(mealsUrl)
-						.then(
-							function (response) {
-								this.isFetchingData = false;
-								this.verifyData(response.data);
-							}.bind(this)
-						)
-						.catch(
-							function (error) {
-								this.isFetchingData = false;
-								let errorMsg = "Erro ao buscar dados na API: " + error;
-								alert(errorMsg);
-								console.error(errorMsg);
-							}.bind(this)
-						);
-				}
+			if (this.searchText != searchingIngredient) {
+				this.searchText = searchingIngredient;
+			}
+
+			const apiHelper = new ApiHelper("1");
+			let mealsEndpoint = apiHelper.Endpoints.category;
+			let mealsUrl = apiHelper.buildRequestUrl(mealsEndpoint, searchingIngredient);
+
+			if (LibUtils.isFilled(mealsUrl)) {
+				this.isFetchingData = true;
+				axios
+					.get(mealsUrl)
+					.then(
+						function (response) {
+							this.isFetchingData = false;
+							this.verifyData(response.data);
+						}.bind(this)
+					)
+					.catch(
+						function (error) {
+							this.isFetchingData = false;
+							let errorMsg = "Erro ao buscar dados na API: " + error;
+							alert(errorMsg);
+							console.error(errorMsg);
+						}.bind(this)
+					);
+			}
+		},
+
+		/*
+		| função: getSearchedIngredientDisplay
+		| Realiza replace de '_' por espaço, para exibir o texto de busca de forma legível
+		| ---- */
+		getSearchedIngredientDisplay: function () {
+			if (LibUtils.isFilled(this.searchText)) {
+				return this.searchText.toString().replace(/_/g, " ");
 			}
 		},
 
@@ -133,7 +150,7 @@ export default Vue.extend({
 				this.navigate("receita", params);
 			}
 		},
-
+		
 		/*
 		| função: paginarDados
 		| Corre do ponto inicial ao limite por exibição e coloca no array que será usado para exibição
@@ -162,7 +179,7 @@ export default Vue.extend({
 			}
 		},
 
-		/*		 
+		/*
 		| funções relativas à avançar e recuar paginação
 		| ---- */
 		avancarPaginacao: function () {
