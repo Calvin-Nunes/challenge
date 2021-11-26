@@ -9,8 +9,10 @@
 				</div>
 			</div>
 		</section>
+
 		<section ref="section_meals">
 			<h4 class="page-subtitle">Meals</h4>
+
 			<div class="meals-holder">
 				<load-spinner v-if="isFetchingData" :loading="isFetchingData"></load-spinner>
 				<div
@@ -19,13 +21,16 @@
 					:key="meal.idMeal"
 					class="meal-row show-as-animation"
 					@click="goToMealDetails(meal)">
+
 					<div class="meal-image-holder">
-						<img :src="meal.strMealThumb" :alt="meal.strMeal" />
+						<img :src="meal.strMealThumb" :alt="meal.strMeal" class="img-thumbnail"/>
 					</div>
+					
 					<p class="meal-name">{{ meal.strMeal }}</p>
 				</div>
 				<p v-else>No meals available</p>
 			</div>
+
 			<div class="pagination-box" v-if="totalPages > 1">
 				<c-button caption="< Anterior" theme="light" :disabled="currentPage <= 1" :onTap="recuarPaginacao"> </c-button>
 				<p>{{ currentPage }} / {{ totalPages }}</p>
@@ -229,16 +234,6 @@ export default Vue.extend({
 	height: 86px;
 	padding: 0 5px;
 	flex-shrink: 0;
-}
-
-.meal-image-holder img {
-	display: block;
-	width: 100%;
-	height: auto;
-	max-height: 86px;
-	object-fit: contain;
-	margin: 0 auto;
-	text-align: center;
 }
 
 .meal-name {

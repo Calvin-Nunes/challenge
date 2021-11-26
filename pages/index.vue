@@ -5,6 +5,7 @@
 				<img src="~/assets/images/banner.svg" alt="banner" height="250" />
 			</div>
 		</section>
+
 		<section>
 			<div class="description-card">
 				<div class="input-pesquisa-box">
@@ -13,6 +14,7 @@
 				<h3>Choose a Category</h3>
 			</div>
 		</section>
+
 		<section>
 			<div class="categories-holder">
 				<load-spinner v-if="isFetchingData" :loading="isFetchingData"></load-spinner>
@@ -24,6 +26,7 @@
 				</a>
 			</div>
 		</section>
+		
 	</div>
 </template>
 

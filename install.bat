@@ -7,5 +7,5 @@ echo ">>> Local da Instalacao:" %~dp0
 echo ">>> Instalando pacotes basicos..."
 npm install
 echo ">>> Fim da instalação"
-echo "use o run_server.bat para iniciar o servidor NodeJs"
+echo "utilize o run_app.bat para iniciar a aplicação"
 echo "<--------->"

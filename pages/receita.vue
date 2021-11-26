@@ -37,7 +37,7 @@
 				</div>
 				<span class="meal-source">
 					From:
-					<a :href="this.meal.strSource || '#'">{{ this.meal.strSource || "" }}</a>
+					<a :href="this.meal.strSource || '#'" target="_blank">{{ this.meal.strSource || "" }}</a>
 				</span>
 			</div>
 		</section>
@@ -132,6 +132,7 @@ export default Vue.extend({
 				let returnedMeals = data.meals || [];
 				this.meal = returnedMeals[0] || {};
 				this.mealName = this.meal.strMeal || "";
+				console.log(this.meal)
 				this.normalizeIngredients();
 			}
 		},

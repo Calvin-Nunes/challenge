@@ -103,16 +103,6 @@ export default Input;
 	cursor: pointer;
 }
 
-.no-style-button{
-	outline: none;
-	border: none;
-	height: 100%;
-	width: fit-content;
-	background: none;
-	padding: 0;
-	margin: 0;
-}
-
 .input-label {
 	width: 100%;
 	color: #777777;
@@ -120,4 +110,5 @@ export default Input;
 	padding: 0;
 	margin: 0;
 }
+
 </style>
